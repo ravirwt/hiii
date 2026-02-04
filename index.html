@@ -46,4 +46,147 @@
     .card {
       width: min(700px, 92vw);
       padding: 28px 22px;
-      background: va
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border-radius: 26px;
+      text-align: center;
+      box-shadow: 0 18px 60px rgba(0,0,0,.15);
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      margin-bottom: 20px;
+    }
+
+    .emoji {
+      font-size: 48px;
+      animation: bounce 1.4s infinite;
+    }
+
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .button-zone {
+      position: relative;
+      width: min(520px, 92%);
+      height: 160px;
+      margin: 10px auto;
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 16px 26px;
+      font-size: 18px;
+      font-weight: 800;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,.14);
+      transition: transform .15s ease, background .15s ease;
+    }
+
+    #yesBtn {
+      left: 18%;
+      background: var(--yes);
+      color: white;
+    }
+    #yesBtn:hover { background: var(--yesHover); }
+
+    #noBtn {
+      left: 62%;
+      background: #f3f4f6;
+    }
+
+    .hint {
+      font-size: 13px;
+      opacity: .7;
+      margin-top: 8px;
+    }
+
+    .result {
+      display: none;
+      animation: pop .4s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="card">
+    <div class="emoji">💖💘💞</div>
+
+    <h1>Shivani, will you be my Valentine?</h1>
+
+    <section class="button-zone" id="zone">
+      <button id="yesBtn">Yes 💕</button>
+      <button id="noBtn">No 🙈</button>
+    </section>
+
+    <div class="hint" id="hint">The “No” button is shy 🤭</div>
+
+    <section class="result" id="result">
+      <h2>YAYYY 🥰🎉</h2>
+      <p>You just made my heart go 💓💓💓</p>
+    </section>
+  </main>
+
+  <script>
+    const zone = document.getElementById("zone");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const result = document.getElementById("result");
+    const hint = document.getElementById("hint");
+
+    /* floating hearts */
+    setInterval(() => {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = ["💖","💘","💗","💕","💓"][Math.floor(Math.random()*5)];
+      h.style.left = Math.random()*100 + "vw";
+      h.style.animationDuration = 4 + Math.random()*3 + "s";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 7000);
+    }, 500);
+
+    /* NO button runs away */
+    function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+
+    zone.addEventListener("pointermove", e => {
+      const b = noBtn.getBoundingClientRect();
+      const z = zone.getBoundingClientRect();
+      const d = Math.hypot(
+        (b.left + b.width/2) - e.clientX,
+        (b.top + b.height/2) - e.clientY
+      );
+      if(d < 130){
+        noBtn.style.left = clamp(Math.random()*400,0,z.width-b.width)+"px";
+        noBtn.style.top  = clamp(Math.random()*120,0,z.height-b.height)+"px";
+      }
+    });
+
+    /* YES click */
+    yesBtn.addEventListener("click", () => {
+      zone.style.display = "none";
+      hint.style.display = "none";
+      result.style.display = "block";
+
+      confetti({
+        particleCount: 250,
+        spread: 120,
+        origin: { y: 0.6 },
+        emojis: ["💖","💘","💕","💗","🥰"],
+        emojiSize: 24
+      });
+    });
+  </script>
+</body>
+</html>
